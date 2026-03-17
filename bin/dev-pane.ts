@@ -91,10 +91,8 @@ try {
   process.exit(1);
 }
 
-// --- Run collab installer in worktree, then launch Claude Code drone (Sonnet) ---
-// Check .claude/commands/ first (installed repos), fall back to src/commands/ (collab repo itself)
-const installScript = `test -f .claude/commands/collab.install.ts && bun .claude/commands/collab.install.ts || bun src/commands/collab.install.ts`;
-run(`tmux send-keys -t ${dronePane} 'cd ${resolvedWorktree} && ${installScript} && .collab/bin/collab pipelines install full-workflow --yes 2>/dev/null; claude --dangerously-skip-permissions --model sonnet' Enter`);
+// --- Launch Claude Code drone (Sonnet) in the worktree ---
+run(`tmux send-keys -t ${dronePane} 'cd ${resolvedWorktree} && claude --dangerously-skip-permissions --model sonnet' Enter`);
 
 // --- Output result ---
 console.log(JSON.stringify({
