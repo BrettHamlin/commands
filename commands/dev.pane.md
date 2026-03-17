@@ -4,7 +4,14 @@ Split the current tmux window 50/50. The left pane is the **🧠 mind** (Opus �
 
 ## Arguments
 
-- `$ARGUMENTS` — Optional: `--branch <name>` and/or `--base <branch>`. If omitted, branch auto-generates and base is the current branch.
+- `$ARGUMENTS` — Optional flags:
+  - `--branch <name>` — Branch name for the worktree
+  - `--base <branch>` — Base branch to fork from
+  - `--task <description>` — Task description to send to the drone
+  - `--linear <ticket-id>` — Linear ticket ID (e.g., ENG-123) — drone fetches and implements it
+  - `--jira <ticket-id>` — Jira ticket ID (e.g., PROJ-456) — drone fetches and implements it
+
+  If branch/base are omitted, branch auto-generates and base is the current branch. Task, linear, and jira are mutually exclusive — only one task source at a time.
 
 ## Steps
 
@@ -29,7 +36,13 @@ Split the current tmux window 50/50. The left pane is the **🧠 mind** (Opus �
    sleep 5 && tmux capture-pane -t <drone_pane> -p | tail -10
    ```
 
-5. Set the 🧠 mind session to Opus as the **last step** (run in background so it fires after this response completes):
+5. If the JSON output includes a `task` field, send it to the 🛸 drone after it has started (wait 10 seconds for Claude Code to initialize):
+   ```bash
+   sleep 10 && bun ~/.claude/bin/tmux-send.ts <drone_pane> "<task>"
+   ```
+   Use `run_in_background: true` on this Bash call.
+
+6. Set the 🧠 mind session to Opus as the **last step** (run in background so it fires after this response completes):
    ```bash
    sleep 5 && bun ~/.claude/bin/tmux-send.ts <mind_pane> "/model opus"
    ```
