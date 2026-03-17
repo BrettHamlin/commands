@@ -5,17 +5,13 @@
  *
  * Usage:
  *   bun dev-pane.ts [--branch <name>] [--base <branch>] [--pane <pane-id>]
- *                   [--task <description>] [--linear <ticket-id>] [--jira <ticket-id>]
  *
  * Options:
  *   --branch  Branch name for worktree (default: auto-generated drone/<repo>-<timestamp>)
  *   --base    Base branch to fork from (default: dev if exists, else main)
  *   --pane    Tmux pane ID of the caller (default: current pane via tmux display-message)
- *   --task    Task description to send to the drone after launch
- *   --linear  Linear ticket ID to fetch and send to the drone (e.g., ENG-123)
- *   --jira    Jira ticket ID to fetch and send to the drone (e.g., PROJ-456)
  *
- * Output: JSON with mind_pane, drone_pane, worktree, branch, base, task
+ * Output: JSON with mind_pane, drone_pane, worktree, branch, base
  */
 
 import { execSync } from "child_process";
@@ -95,20 +91,6 @@ try {
   process.exit(1);
 }
 
-// --- Resolve task (if provided) ---
-const taskDesc = getArg("--task");
-const linearTicket = getArg("--linear");
-const jiraTicket = getArg("--jira");
-
-let task: string | undefined;
-if (taskDesc) {
-  task = taskDesc;
-} else if (linearTicket) {
-  task = `Fetch Linear ticket ${linearTicket} and implement it. Use any available Linear tools or MCP to get the full ticket details, then work through the requirements.`;
-} else if (jiraTicket) {
-  task = `Fetch Jira ticket ${jiraTicket} and implement it. Use any available Jira tools or MCP to get the full ticket details, then work through the requirements.`;
-}
-
 // --- Launch Claude Code drone (Sonnet) in the worktree ---
 run(`tmux send-keys -t ${dronePane} 'cd ${resolvedWorktree} && claude --dangerously-skip-permissions --model sonnet' Enter`);
 
@@ -119,5 +101,4 @@ console.log(JSON.stringify({
   worktree: resolvedWorktree,
   branch: branchName,
   base: baseBranch,
-  ...(task && { task }),
 }));
