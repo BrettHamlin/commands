@@ -63,6 +63,12 @@ Split the current tmux window 50/50. The left pane is the **🧠 mind** (Opus �
    ```
    Use `run_in_background: true` on this Bash call. The delay gives time for the current response to finish and the prompt to become available.
 
+8. Tell the user: "The 🛸 drone will signal `[TASK:COMPLETE]` when it's done. I'll automatically run `/dev.review` when that happens."
+
+## When you receive `[TASK:COMPLETE]`
+
+The 🛸 drone has finished its work. The `CLAUDE.local.md` in the worktree instructs the drone to send this signal when done. **Immediately run `/dev.review` to begin the code review cycle.** Do not wait for user input.
+
 ## Sending messages to the 🛸 drone
 
 Always use the `tmux-send.ts` CLI to send messages to the 🛸 drone:

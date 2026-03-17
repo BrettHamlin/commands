@@ -15,7 +15,7 @@
  */
 
 import { execSync } from "child_process";
-import { existsSync } from "fs";
+import { existsSync, writeFileSync } from "fs";
 import { basename } from "path";
 
 function run(cmd: string): string {
@@ -90,6 +90,19 @@ try {
   console.error(JSON.stringify({ error: `Failed to split tmux: ${err}` }));
   process.exit(1);
 }
+
+// --- Write CLAUDE.local.md with signal-back instruction ---
+const claudeLocal = `# Drone Signal Protocol
+
+When you have completed your task, you MUST signal the mind by running this exact command:
+
+\`\`\`bash
+bun ~/.claude/bin/tmux-send.ts ${mindPane} "[TASK:COMPLETE]"
+\`\`\`
+
+This is mandatory. Do not skip this step. The mind is waiting for this signal to begin code review.
+`;
+writeFileSync(`${resolvedWorktree}/CLAUDE.local.md`, claudeLocal);
 
 // --- Launch Claude Code drone (Sonnet) in the worktree ---
 run(`tmux send-keys -t ${dronePane} 'cd ${resolvedWorktree} && claude --dangerously-skip-permissions --model sonnet' Enter`);
