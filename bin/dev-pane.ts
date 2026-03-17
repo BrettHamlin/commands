@@ -94,13 +94,13 @@ try {
 // --- Write CLAUDE.local.md with signal-back instruction ---
 const claudeLocal = `# Drone Signal Protocol
 
-When you have completed your task, you MUST signal the mind by running this exact command:
+After completing ANY request — whether it's your initial task, a fix from code review, or any other instruction from the mind — you MUST signal back by running this exact command:
 
 \`\`\`bash
 bun ~/.claude/bin/tmux-send.ts ${mindPane} "[TASK:COMPLETE]"
 \`\`\`
 
-This is mandatory. Do not skip this step. The mind is waiting for this signal to begin code review.
+This is mandatory. Never skip this step. The mind is waiting for this signal before it can continue. Every piece of work you finish must end with this signal.
 `;
 writeFileSync(`${resolvedWorktree}/CLAUDE.local.md`, claudeLocal);
 
